@@ -6,9 +6,8 @@
 
   <ItemGroup>
     <Folder Include="DTO\" />
-    <Folder Include="Entities\" />
     <Folder Include="Exceptions\" />
-    <Folder Include="Interfaces\" />
+    <Folder Include="Interfaces\CustomServices\" />
     <Folder Include="Services\" />
   </ItemGroup>
 

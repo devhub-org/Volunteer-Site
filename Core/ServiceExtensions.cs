@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Core
 {
-    internal class ServiceExtensions
+    public class ServiceExtensions
     {
+
     }
 }
