@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Interfaces.CustomServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class TableService
+    public class TableService : ITableService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;

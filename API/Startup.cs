@@ -22,10 +22,10 @@ namespace API
         {
             services.AddControllers();
             services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
-            //services.AddCustomServices();
+            services.AddCustomServices();
             services.AddUnitOfWork();
             services.AddRepository();
-            //services.AddAutoMapper();
+            services.AddAutoMapper();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });

@@ -10,7 +10,7 @@ namespace Infrastructure.Data
 {
     public class ApplicationContext : DbContext
     {
-        public ApplicationContext(DbContextOptions options) : base(options) {}
+        public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}
         public DbSet<Author> Authors { get; set; }
         public DbSet<Table> Tables { get; set; }
     }

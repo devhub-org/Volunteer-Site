@@ -3,6 +3,7 @@ using Core.DTO;
 using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces;
+using Core.Interfaces.CustomServices;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Core.Services
 {
-    public class AuthorService
+    public class AuthorService : IAuthorService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
