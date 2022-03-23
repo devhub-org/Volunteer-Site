@@ -5,6 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Infrastructure;
+using Core.Helpers;
+using API.Middlewares;
 
 namespace API
 {
@@ -21,11 +23,25 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
             services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
+
+            services.AddIdentity();
+
+            services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
+
             services.AddCustomServices();
+
             services.AddUnitOfWork();
+
             services.AddRepository();
+
             services.AddAutoMapper();
+
+            services.AddResponseCaching();
+
+            services.AddJwtAuthentication(Configuration);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -44,7 +60,11 @@ namespace API
 
             app.UseHttpsRedirection();
 
+            app.UseMiddleware<ErrorHandlerMiddleware>();
+
             app.UseRouting();
+
+            app.UseResponseCaching();
 
             app.UseAuthentication();
             app.UseAuthorization();

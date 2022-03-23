@@ -1,5 +1,7 @@
 ﻿using Core.DTO;
 using Core.Interfaces.CustomServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,6 +23,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> Get()
         {
             return Ok(await _authorService.Get());
