@@ -24,7 +24,9 @@ namespace API
         {
             services.AddControllers();
 
-            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
+            services.AddCors();
+
+            services.AddDbContext(Configuration.GetConnectionString("SommeConnStr"));
 
             services.AddIdentity();
 
@@ -60,13 +62,16 @@ namespace API
 
             app.UseHttpsRedirection();
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
-
             app.UseRouting();
+
+            app.UseCors(builder => builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
+
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             app.UseResponseCaching();
 
             app.UseAuthentication();
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
