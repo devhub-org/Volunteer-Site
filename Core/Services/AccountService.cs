@@ -1,4 +1,6 @@
-﻿using Core.DTO;
+﻿using AutoMapper;
+using Core.DTO;
+using Core.Entities;
 using Core.Exceptions;
 using Core.Helpers;
 using Core.Interfaces.CustomServices;
@@ -17,10 +19,9 @@ namespace Core.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly UserManager<Author> _userManager;
         private readonly IOptions<JwtOptions> jwtOptions;
-
-        public AccountService(UserManager<IdentityUser> userManager, IOptions<JwtOptions> jwtOptions)
+        public AccountService(UserManager<Author> userManager, IOptions<JwtOptions> jwtOptions)
         {
             _userManager = userManager;
             this.jwtOptions = jwtOptions;
@@ -65,7 +66,7 @@ namespace Core.Services
 
         public async Task RegisterAsync(RegisterUserDTO data)
         {
-            var user = new IdentityUser()
+            var user = new Author()
             {
                 UserName = data.Email,
                 Email = data.Email

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Data
 {
-    public class ApplicationContext : IdentityDbContext
+    public class ApplicationContext : IdentityDbContext<Author>
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) : base(options) {}
         protected override void OnModelCreating(ModelBuilder modelBuilder)

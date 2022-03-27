@@ -26,7 +26,7 @@ namespace API
 
             services.AddCors();
 
-            services.AddDbContext(Configuration.GetConnectionString("SommeConnStr"));
+            services.AddDbContext(Configuration.GetConnectionString("DefaultConnection"));
 
             services.AddIdentity();
 

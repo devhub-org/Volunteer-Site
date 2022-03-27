@@ -23,12 +23,13 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> Get()
         {
             return Ok(await _authorService.Get());
         }
         [HttpGet("{id:int}")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<AuthorDTO>> Get(int id)
         {
             var author = await _authorService.GetAuthorById(id);

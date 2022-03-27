@@ -1,7 +1,11 @@
 ﻿using Core.DTO;
+using Core.Entities;
 using Core.Interfaces.CustomServices;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -10,6 +14,7 @@ namespace API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly Microsoft.AspNetCore.Identity.UserManager<Author> _userManager;
         private readonly IAccountService accountService;
 
         public AccountController(IAccountService accountService)

@@ -1,4 +1,5 @@
-﻿using Core.Interfaces;
+﻿using Core.Entities;
+using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repository;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ namespace Infrastructure
 
             public static void AddIdentity(this IServiceCollection services)
             {
-                services.AddIdentity<IdentityUser, IdentityRole>()
+                services.AddIdentity<Author, IdentityRole>()
                     .AddEntityFrameworkStores<ApplicationContext>()
                     .AddDefaultTokenProviders();
             }
