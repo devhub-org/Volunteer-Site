@@ -1,9 +1,12 @@
 ﻿using Core.DTO;
 using Core.Interfaces.CustomServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -21,11 +24,13 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
             return Ok(await _tableService.Get());
         }
         [HttpGet("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TableDTO>> Get(int id)
         {
             var track = await _tableService.GetTableById(id);
@@ -33,6 +38,7 @@ namespace API.Controllers
             return track;
         }
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Post([FromBody] TableDTO table)
         {
             await _tableService.Create(table);
@@ -40,6 +46,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] TableDTO table)
         {
             await _tableService.Edit(table);
@@ -47,6 +54,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Delete(int id)
         {
             await _tableService.Delete(id);

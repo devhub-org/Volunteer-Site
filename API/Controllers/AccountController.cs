@@ -14,7 +14,6 @@ namespace API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly Microsoft.AspNetCore.Identity.UserManager<Author> _userManager;
         private readonly IAccountService accountService;
 
         public AccountController(IAccountService accountService)

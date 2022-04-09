@@ -45,6 +45,7 @@ namespace Core.Services
 
         public string GenerateToken(string email)
         {
+
             var claims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Email, email)
@@ -61,6 +62,7 @@ namespace Core.Services
                     );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+
         }
 
 
@@ -69,7 +71,9 @@ namespace Core.Services
             var user = new Author()
             {
                 UserName = data.Email,
-                Email = data.Email
+                Email = data.Email,
+                Name = data.Name,
+                Surname = data.Surname
             };
             var result = await _userManager.CreateAsync(user, data.Password);
 

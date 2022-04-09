@@ -9,8 +9,10 @@ namespace Core.DTO
 {
     public class AuthorDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string Email { get; set; }
         public string Location { get; set; }
         public double Rating { get; set; }
         public string Avatar { get; set; }
