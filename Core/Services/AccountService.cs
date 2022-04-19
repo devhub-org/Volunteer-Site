@@ -21,6 +21,7 @@ namespace Core.Services
     {
         private readonly UserManager<Author> _userManager;
         private readonly IOptions<JwtOptions> jwtOptions;
+
         public AccountService(UserManager<Author> userManager, IOptions<JwtOptions> jwtOptions)
         {
             _userManager = userManager;
@@ -62,9 +63,7 @@ namespace Core.Services
                     );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
-
 
         public async Task RegisterAsync(RegisterUserDTO data)
         {

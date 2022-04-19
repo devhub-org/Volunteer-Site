@@ -7,11 +7,14 @@ using Microsoft.OpenApi.Models;
 using Infrastructure;
 using Core.Helpers;
 using API.Middlewares;
+using Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace API
 {
     public class Startup
     {
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;

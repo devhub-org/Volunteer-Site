@@ -30,6 +30,7 @@ namespace Core.Services
             await _unitOfWork.AuthorRepository.Insert(_mapper.Map<Author>(author));
             await _unitOfWork.SaveChangesAsync();
         }
+
         public async Task Delete(string id)
         {
             if (id == null) throw new HttpException($"Invalid id!", HttpStatusCode.NotFound);
@@ -38,6 +39,7 @@ namespace Core.Services
                 await _unitOfWork.AuthorRepository.Delete(author);
             await _unitOfWork.SaveChangesAsync();
         }
+
         public async Task Edit(AuthorDTO author)
         {
             if (author == null)
@@ -45,10 +47,12 @@ namespace Core.Services
             _unitOfWork.AuthorRepository.Update(_mapper.Map<Author>(author));
             await _unitOfWork.SaveChangesAsync();
         }
+
         public async Task<IEnumerable<AuthorDTO>> Get()
         {
             return _mapper.Map<IEnumerable<AuthorDTO>>(await _unitOfWork.AuthorRepository.Get());
         }
+
         public async Task<AuthorDTO> GetAuthorById(string id)
         {
             if (id == null) throw new HttpException($"Invalid id!", HttpStatusCode.BadGateway);
