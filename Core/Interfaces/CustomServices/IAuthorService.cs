@@ -10,10 +10,10 @@ namespace Core.Interfaces.CustomServices
     public interface IAuthorService
     {
         Task<IEnumerable<AuthorDTO>> Get();
-        Task<AuthorDTO> GetAuthorById(int id);
-        Task<IEnumerable<TableDTO>> GetAuthorTables(int id);
+        Task<AuthorDTO> GetAuthorById(string id);
+        Task<IEnumerable<TableDTO>> GetAuthorTables(string id);
         Task Create(AuthorDTO author);
         Task Edit(AuthorDTO author);
-        Task Delete(int id);
+        Task Delete(string id);
     }
 }

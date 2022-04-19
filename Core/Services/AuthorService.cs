@@ -30,14 +30,16 @@ namespace Core.Services
             await _unitOfWork.AuthorRepository.Insert(_mapper.Map<Author>(author));
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task Delete(int id)
+
+        public async Task Delete(string id)
         {
-            if (id < 0) throw new HttpException($"Invalid id!", HttpStatusCode.NotFound);
+            if (id == null) throw new HttpException($"Invalid id!", HttpStatusCode.NotFound);
             var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author != null)
                 await _unitOfWork.AuthorRepository.Delete(author);
             await _unitOfWork.SaveChangesAsync();
         }
+
         public async Task Edit(AuthorDTO author)
         {
             if (author == null)
@@ -45,21 +47,23 @@ namespace Core.Services
             _unitOfWork.AuthorRepository.Update(_mapper.Map<Author>(author));
             await _unitOfWork.SaveChangesAsync();
         }
+
         public async Task<IEnumerable<AuthorDTO>> Get()
         {
             return _mapper.Map<IEnumerable<AuthorDTO>>(await _unitOfWork.AuthorRepository.Get());
         }
-        public async Task<AuthorDTO> GetAuthorById(int id)
+
+        public async Task<AuthorDTO> GetAuthorById(string id)
         {
-            if (id < 0) throw new HttpException($"Invalid id!", HttpStatusCode.BadGateway);
+            if (id == null) throw new HttpException($"Invalid id!", HttpStatusCode.BadGateway);
             var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author == null) throw new HttpException($"Author Not Found!", HttpStatusCode.NotFound);
             return _mapper.Map<AuthorDTO>(await author);
         }
 
-        public async Task<IEnumerable<TableDTO>> GetAuthorTables(int id)
+        public async Task<IEnumerable<TableDTO>> GetAuthorTables(string id)
         {
-            if (id < 0) throw new HttpException($"Invalid id {id}!", HttpStatusCode.BadGateway);
+            if (id == null) throw new HttpException($"Invalid id {id}!", HttpStatusCode.BadGateway);
             var tables = _mapper.Map<IEnumerable<TableDTO>>(await _unitOfWork.TableRepository.Get(e => e.AuthorId == id));
             return tables;
         }

@@ -14,6 +14,7 @@ namespace Infrastructure
         {
             services.AddScoped<IAuthorService, AuthorService>();
             services.AddScoped<ITableService, TableService>();
+            services.AddScoped<IAccountService, AccountService>();
         }
         public static void AddAutoMapper(this IServiceCollection services)
         {

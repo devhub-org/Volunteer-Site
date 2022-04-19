@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Migrations
 {
-    public partial class changetablemodel : Migration
+    public partial class addsomeecomdatabase : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

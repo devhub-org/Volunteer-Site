@@ -1,5 +1,7 @@
 ﻿using Core.DTO;
 using Core.Interfaces.CustomServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,20 +23,23 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> Get()
         {
             return Ok(await _authorService.Get());
         }
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<AuthorDTO>> Get(int id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult<AuthorDTO>> Get(string id)
         {
             var author = await _authorService.GetAuthorById(id);
-            _logger.LogInformation($"Got a author with id {id}");
+            _logger.LogInformation($"Got a author with id { id}");
             return author;
         }
         [HttpGet]
         [Route("get-all")]
-        public async Task<ActionResult<IEnumerable<AuthorTablesDTO>>> GetAllTables(int id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult<IEnumerable<AuthorTablesDTO>>> GetAllTables(string id)
         {
             var tables = await _authorService.GetAuthorTables(id);
             return Ok(tables);
@@ -42,6 +47,7 @@ namespace API.Controllers
 
 
         [HttpPost]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Post([FromBody] AuthorDTO author)
         {
             await _authorService.Create(author);
@@ -49,6 +55,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] AuthorDTO author)
         {
             await _authorService.Edit(author);
@@ -56,7 +63,8 @@ namespace API.Controllers
             return Ok();
         }
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> Delete(int id)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Delete(string id)
         {
             await _authorService.Delete(id);
             _logger.LogInformation($"Successfully delete author with id {id}");
