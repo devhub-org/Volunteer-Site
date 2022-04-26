@@ -13,7 +13,6 @@ namespace Core.Entities
         public string Describe { get; set; }
         public string Goal { get; set; }
         public string Image { get; set; }
-        public string AuthorId { get; set; }
         public Author Author { get; set; }
     }
 }

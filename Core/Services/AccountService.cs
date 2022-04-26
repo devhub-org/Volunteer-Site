@@ -88,5 +88,20 @@ namespace Core.Services
                 throw new HttpException(messageBuilder.ToString(), System.Net.HttpStatusCode.BadRequest);
             }
         }
+
+        public Task<AuthorizationDTO> RefreshTokenAsync(AuthorizationDTO userTokensDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task LogoutAsync(AuthorizationDTO userTokensDTO)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task SentResetPasswordTokenAsync(string userEmail)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

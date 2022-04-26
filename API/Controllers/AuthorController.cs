@@ -37,7 +37,7 @@ namespace API.Controllers
             return author;
         }
         [HttpGet]
-        [Route("get-all")]
+        [Route("get-all-tables")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<AuthorTablesDTO>>> GetAllTables(string id)
         {
