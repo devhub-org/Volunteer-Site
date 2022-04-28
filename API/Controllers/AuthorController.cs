@@ -54,6 +54,7 @@ namespace API.Controllers
             _logger.LogInformation("Author was successfully created!");
             return Ok();
         }
+
         [HttpPut]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] AuthorDTO author)
