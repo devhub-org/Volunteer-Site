@@ -73,8 +73,8 @@ namespace Core.Services
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, author.Id),
-                new Claim(ClaimTypes.Name, author.UserName),
+                new Claim("Id", author.Id),
+                new Claim("Email", author.UserName),
             };
 
             return claims;

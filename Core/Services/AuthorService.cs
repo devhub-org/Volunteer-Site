@@ -64,7 +64,7 @@ namespace Core.Services
         public async Task<IEnumerable<TableDTO>> GetAuthorTables(string id)
         {
             if (id == null) throw new HttpException($"Invalid id {id}!", HttpStatusCode.BadGateway);
-            var tables = _mapper.Map<IEnumerable<TableDTO>>(await _unitOfWork.TableRepository.Get(e => e.Author.Id == id));
+            var tables = _mapper.Map<IEnumerable<TableDTO>>(await _unitOfWork.TableRepository.Get(e => e.AuthorId == id));
             return tables;
         }
     }

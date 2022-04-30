@@ -12,8 +12,8 @@ namespace Core.DTO
         public int Id { get; set; }
         public string Name { get; set; }
         public string Describe { get; set; }
-        public string Goal { get; set; }
         public string Image { get; set; }
-        public Author Author { get; set; }
+        public double Price { get; set; }
+        public string AuthorId { get; set; }
     }
 }
