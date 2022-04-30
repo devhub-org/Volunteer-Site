@@ -19,13 +19,17 @@ namespace Core.Services
 {
     public class AccountService : IAccountService
     {
-        private readonly UserManager<Author> _userManager;
-        private readonly IOptions<JwtOptions> jwtOptions;
+        protected readonly UserManager<Author> _userManager;
+        protected readonly IOptions<JwtOptions> _jwtOptions;
+        protected readonly IJwtService _jwtService;
 
-        public AccountService(UserManager<Author> userManager, IOptions<JwtOptions> jwtOptions)
+        public AccountService(UserManager<Author> userManager, 
+            IOptions<JwtOptions> jwtOptions,
+            IJwtService jwtService)
         {
             _userManager = userManager;
-            this.jwtOptions = jwtOptions;
+            _jwtOptions = jwtOptions;
+            _jwtService = jwtService;
         }
 
         public async Task<AuthorizationDTO> LoginAsync(string email, string password)
@@ -37,32 +41,21 @@ namespace Core.Services
                 throw new HttpException("Invalid login or password.", System.Net.HttpStatusCode.BadRequest);
             }
 
-            // generate token
-            return new AuthorizationDTO
-            {
-                Token = GenerateToken(email)
-            };
+            return await GenerateToken(user);
         }
 
-        public string GenerateToken(string email)
+        public async Task<AuthorizationDTO> GenerateToken(Author author)
         {
+            var claims = _jwtService.SetClaims(author);
 
-            var claims = new List<Claim>()
+            var token = _jwtService.CreateToken(claims);
+
+            var tokens = new AuthorizationDTO()
             {
-                new Claim(ClaimTypes.Email, email)
+                Token = token,
             };
 
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Key));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var token = new JwtSecurityToken(
-                    issuer: jwtOptions.Value.Issuer,
-                    claims: claims,
-                    expires: DateTime.UtcNow.AddHours(jwtOptions.Value.LifeTime),
-                    signingCredentials: credentials
-                    );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+            return tokens;
         }
 
         public async Task RegisterAsync(RegisterUserDTO data)

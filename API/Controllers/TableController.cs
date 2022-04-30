@@ -24,29 +24,30 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
             return Ok(await _tableService.Get());
         }
         [HttpGet("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TableDTO>> Get(int id)
         {
             var track = await _tableService.GetTableById(id);
             _logger.LogInformation($"Got a table with id {id}");
             return track;
         }
-        [HttpPost]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> Post([FromBody] TableDTO table)
+
+        [HttpPost("Create")]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Create([FromBody] TableDTO table)
         {
             await _tableService.Create(table);
             _logger.LogInformation("Table was successfully created!");
             return Ok();
         }
         [HttpPut]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] TableDTO table)
         {
             await _tableService.Edit(table);
@@ -54,7 +55,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpDelete("{id:int}")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Delete(int id)
         {
             await _tableService.Delete(id);

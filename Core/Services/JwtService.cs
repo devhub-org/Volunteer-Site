@@ -25,13 +25,13 @@ namespace Core.Services
             this.jwtOptions = jwtOptions;
         }
 
-        public string CreateRefreshToken()
-        {
-            var randomNumbers = new byte[32];
-            using var rng = RandomNumberGenerator.Create();
-            rng.GetBytes(randomNumbers);
-            return Convert.ToBase64String(randomNumbers);
-        }
+        //public string CreateRefreshToken()
+        //{
+        //    var randomNumbers = new byte[32];
+        //    using var rng = RandomNumberGenerator.Create();
+        //    rng.GetBytes(randomNumbers);
+        //    return Convert.ToBase64String(randomNumbers);
+        //}
 
         public string CreateToken(IEnumerable<Claim> claims)
         {
@@ -45,29 +45,29 @@ namespace Core.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        public IEnumerable<Claim> GetClaimsFromExpiredToken(string token)
-        {
-            var tokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = false,
-                ValidateLifetime = false,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = jwtOptions.Value.Issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Key)),
-            };
+        //public IEnumerable<Claim> GetClaimsFromExpiredToken(string token)
+        //{
+        //    var tokenValidationParameters = new TokenValidationParameters
+        //    {
+        //        ValidateIssuer = true,
+        //        ValidateAudience = false,
+        //        ValidateLifetime = false,
+        //        ValidateIssuerSigningKey = true,
+        //        ValidIssuer = jwtOptions.Value.Issuer,
+        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Key)),
+        //    };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            JwtSecurityToken jwtSecurityToken;
+        //    var tokenHandler = new JwtSecurityTokenHandler();
+        //    JwtSecurityToken jwtSecurityToken;
 
-            tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-            jwtSecurityToken = securityToken as JwtSecurityToken;
+        //    tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+        //    jwtSecurityToken = securityToken as JwtSecurityToken;
 
-            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-                throw new HttpException("Invalid Token!",System.Net.HttpStatusCode.BadRequest);
+        //    if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+        //        throw new HttpException("Invalid Token!",System.Net.HttpStatusCode.BadRequest);
 
-            return jwtSecurityToken.Claims;
-        }
+        //    return jwtSecurityToken.Claims;
+        ////}
 
         public IEnumerable<Claim> SetClaims(Author author)
         {
@@ -76,9 +76,6 @@ namespace Core.Services
                 new Claim(ClaimTypes.NameIdentifier, author.Id),
                 new Claim(ClaimTypes.Name, author.UserName),
             };
-
-            var roles = userManager.GetRolesAsync(author).Result;
-            claims.AddRange(roles.Select(role => new Claim(ClaimsIdentity.DefaultRoleClaimType, role)));
 
             return claims;
         }
