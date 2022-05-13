@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using Core.Helpers;
 using Core.Interfaces.CustomServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -17,8 +18,14 @@ namespace API.Controllers
     {
         private readonly ITableService _tableService;
         private readonly ILogger<TableController> _logger;
-        public TableController(ITableService tableService, ILogger<TableController> logger)
+        private readonly IFileStorageService _storageService;
+        private readonly string containerName = "albums";
+
+        public TableController(ITableService tableService,
+            ILogger<TableController> logger,
+            IFileStorageService storageService)
         {
+            _storageService = storageService;
             _tableService = tableService;
             _logger = logger;
         }
@@ -39,13 +46,19 @@ namespace API.Controllers
         }
 
         [HttpPost("Create")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> Create([FromBody] TableDTO table)
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Create([FromForm] TableDTO table)
         {
+            if (table.Image != null)
+            {
+                string url = await _storageService.UploadFile(containerName, table.Image);
+            }
             await _tableService.Create(table);
             _logger.LogInformation("Table was successfully created!");
+
             return Ok();
         }
+
         [HttpPut]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] TableDTO table)

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Core.DTO;
 using Core.Entities;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Interfaces.CustomServices;
 using Core.Services;
@@ -16,6 +17,7 @@ namespace Infrastructure
             services.AddScoped<ITableService, TableService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IFileStorageService, AzureStorageService>();
         }
         public static void AddAutoMapper(this IServiceCollection services)
         {
