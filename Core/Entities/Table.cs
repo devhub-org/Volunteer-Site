@@ -18,5 +18,7 @@ namespace Core.Entities
         [MinLength(1)]
         [MaxLength(500_000, ErrorMessage = "You can't ask more than 500,000 people!")]
         public double Price { get; set; }
+        [Required]
+        public bool IsActive { get; set; } = true;
     }
 }
