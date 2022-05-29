@@ -10,7 +10,6 @@ namespace Core.Entities
         public string Name { get; set; }
         [Required]
         public string Describe { get; set; }
-        [Required]
         public string Image { get; set; }
         [Required]
         public string AuthorId { get; set; }

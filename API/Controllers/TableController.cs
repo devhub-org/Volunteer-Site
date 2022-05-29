@@ -48,19 +48,19 @@ namespace API.Controllers
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Create([FromForm] TableDTO table)
         {
+            if (!ModelState.IsValid) return BadRequest("Model is invalid");
+
             if (table.Image != null)
             {
                 string url = await _storageService.UploadFile(containerName, table.Image);
-
                 await _tableService.Create(table);
-                _logger.LogInformation("Table was successfully created!");
-
-
-                return  Ok(url); // also can return all table
-
             }
 
-            return BadRequest();
+            _logger.LogInformation("Table was successfully created!");
+
+
+            return Ok(); // also can return all table
+
         }
 
         [HttpPut]
