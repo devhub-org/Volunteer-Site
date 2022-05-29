@@ -1,9 +1,13 @@
 ﻿using Core.DTO;
+using Core.Helpers;
 using Core.Interfaces.CustomServices;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -14,32 +18,53 @@ namespace API.Controllers
     {
         private readonly ITableService _tableService;
         private readonly ILogger<TableController> _logger;
-        public TableController(ITableService tableService, ILogger<TableController> logger)
+        private readonly IFileStorageService _storageService;
+        private readonly string containerName = "albums";
+
+        public TableController(ITableService tableService,
+            ILogger<TableController> logger, IFileStorageService storageService)
         {
             _tableService = tableService;
             _logger = logger;
+            _storageService = storageService;
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
             return Ok(await _tableService.Get());
         }
         [HttpGet("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TableDTO>> Get(int id)
         {
             var track = await _tableService.GetTableById(id);
             _logger.LogInformation($"Got a table with id {id}");
             return track;
         }
-        [HttpPost]
-        public async Task<ActionResult> Post([FromBody] TableDTO table)
+
+        [HttpPost("Create")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        public async Task<ActionResult> Create([FromForm] TableDTO table)
         {
-            await _tableService.Create(table);
-            _logger.LogInformation("Table was successfully created!");
-            return Ok();
+            if (table.Image != null)
+            {
+                string url = await _storageService.UploadFile(containerName, table.Image);
+
+                await _tableService.Create(table);
+                _logger.LogInformation("Table was successfully created!");
+
+
+                return  Ok(url); // also can return all table
+
+            }
+
+            return BadRequest();
         }
+
         [HttpPut]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] TableDTO table)
         {
             await _tableService.Edit(table);
@@ -47,6 +72,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpDelete("{id:int}")]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Delete(int id)
         {
             await _tableService.Delete(id);

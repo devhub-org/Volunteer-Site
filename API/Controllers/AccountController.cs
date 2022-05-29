@@ -14,7 +14,6 @@ namespace API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly Microsoft.AspNetCore.Identity.UserManager<Author> _userManager;
         private readonly IAccountService accountService;
 
         public AccountController(IAccountService accountService)
@@ -30,9 +29,10 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<AuthorizationDTO>> Login([FromBody] UserLoginDTO data)
+        public async Task<ActionResult> Login([FromBody] UserLoginDTO data)
         {
-            return await accountService.LoginAsync(data.Email, data.Password);
+            var tokens = await accountService.LoginAsync(data.Email, data.Password);
+            return Ok(tokens);
         }
     }
 }

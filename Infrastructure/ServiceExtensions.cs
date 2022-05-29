@@ -24,7 +24,7 @@ namespace Infrastructure
                     .AddDefaultTokenProviders();
             }
             public static void AddRepository(this IServiceCollection services)
-                {
+            {
                 services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             }
             public static void AddUnitOfWork(this IServiceCollection services)
