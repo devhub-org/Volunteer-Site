@@ -1,21 +1,22 @@
-﻿using Azure.Storage.Blobs;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
+﻿using Core.Interfaces.CustomServices;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Azure.Storage.Blobs;
+using Microsoft.Extensions.Configuration;
+using System.IO;
+using Microsoft.AspNetCore.Http;
 
-namespace Core.Helpers
+namespace Core.Services
 {
     public class AzureStorageService : IFileStorageService
     {
         private readonly string connectionString;
         public AzureStorageService(IConfiguration configuration)
         {
-            connectionString = configuration.GetConnectionString("AzureStorageConnection");
+            connectionString = configuration.GetConnectionString("AzureStorageConnectionString");
         }
         public async Task DeleteFile(string containerName, string fileRoute)
         {

@@ -22,22 +22,21 @@ namespace API.Controllers
         private readonly string containerName = "albums";
 
         public TableController(ITableService tableService,
-            ILogger<TableController> logger,
-            IFileStorageService storageService)
+            ILogger<TableController> logger, IFileStorageService storageService)
         {
-            _storageService = storageService;
             _tableService = tableService;
             _logger = logger;
+            _storageService = storageService;
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
             return Ok(await _tableService.Get());
         }
         [HttpGet("{id:int}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<TableDTO>> Get(int id)
         {
             var track = await _tableService.GetTableById(id);
@@ -52,15 +51,20 @@ namespace API.Controllers
             if (table.Image != null)
             {
                 string url = await _storageService.UploadFile(containerName, table.Image);
-            }
-            await _tableService.Create(table);
-            _logger.LogInformation("Table was successfully created!");
 
-            return Ok();
+                await _tableService.Create(table);
+                _logger.LogInformation("Table was successfully created!");
+
+
+                return  Ok(url); // also can return all table
+
+            }
+
+            return BadRequest();
         }
 
         [HttpPut]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Put([FromBody] TableDTO table)
         {
             await _tableService.Edit(table);
@@ -68,7 +72,7 @@ namespace API.Controllers
             return Ok();
         }
         [HttpDelete("{id:int}")]
-        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Delete(int id)
         {
             await _tableService.Delete(id);
