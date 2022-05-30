@@ -45,39 +45,51 @@ namespace Core.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        //public IEnumerable<Claim> GetClaimsFromExpiredToken(string token)
-        //{
-        //    var tokenValidationParameters = new TokenValidationParameters
-        //    {
-        //        ValidateIssuer = true,
-        //        ValidateAudience = false,
-        //        ValidateLifetime = false,
-        //        ValidateIssuerSigningKey = true,
-        //        ValidIssuer = jwtOptions.Value.Issuer,
-        //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Key)),
-        //    };
+        public IEnumerable<Claim> GetClaimsFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = jwtOptions.Value.Issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Value.Key)),
+            };
 
-        //    var tokenHandler = new JwtSecurityTokenHandler();
-        //    JwtSecurityToken jwtSecurityToken;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            JwtSecurityToken jwtSecurityToken;
 
-        //    tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
-        //    jwtSecurityToken = securityToken as JwtSecurityToken;
+            tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+            jwtSecurityToken = securityToken as JwtSecurityToken;
 
-        //    if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
-        //        throw new HttpException("Invalid Token!",System.Net.HttpStatusCode.BadRequest);
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new HttpException("Invalid Token!",System.Net.HttpStatusCode.BadRequest);
 
-        //    return jwtSecurityToken.Claims;
-        ////}
+            return jwtSecurityToken.Claims;
+        }
 
-        public IEnumerable<Claim> SetClaims(Author author)
+        public IEnumerable<Claim> SetClaims(Author author, string userRole)
         {
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, author.Id),
                 new Claim(ClaimTypes.Email, author.UserName),
+                new Claim(ClaimTypes.Role, userRole)
             };
 
             return claims;
+        }
+        public string CreateRefreshToken()
+        {
+            var randomBytes = new byte[32];
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+
+            var refreshToken = Convert.ToBase64String(randomBytes);
+
+            return refreshToken;
         }
     }
 }

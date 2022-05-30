@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core.DTO
+namespace Core.Helpers
 {
-    public class AuthorizationDTO
+    public class RolesOptions
     {
-        public string Token { get; set; }
+        public string User { get; set; }
     }
 }

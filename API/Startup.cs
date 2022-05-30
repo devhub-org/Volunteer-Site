@@ -34,6 +34,7 @@ namespace API
             services.AddIdentity();
 
             services.Configure<JwtOptions>(Configuration.GetSection(nameof(JwtOptions)));
+            services.Configure<RolesOptions>(Configuration.GetSection(nameof(RolesOptions)));
 
             services.AddCustomServices();
 

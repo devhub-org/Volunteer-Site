@@ -14,24 +14,30 @@ namespace API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
-        private readonly IAccountService accountService;
+        private readonly IAccountService _accountService;
 
         public AccountController(IAccountService accountService)
         {
-            this.accountService = accountService;
+            this._accountService = accountService;
         }
 
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterUserDTO data)
         {
-            await accountService.RegisterAsync(data);
+            await _accountService.RegisterAsync(data);
             return Ok("Successfully created new user!");
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] UserLoginDTO data)
         {
-            var tokens = await accountService.LoginAsync(data.Email, data.Password);
+            var tokens = await _accountService.LoginAsync(data.Email, data.Password);
+            return Ok(tokens);
+        }
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] AuthorizationDTO userTokensDTO)
+        {
+            var tokens = await _accountService.RefreshTokenAsync(userTokensDTO);
             return Ok(tokens);
         }
     }
