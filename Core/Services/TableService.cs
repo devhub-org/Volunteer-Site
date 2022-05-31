@@ -2,8 +2,10 @@
 using Core.DTO;
 using Core.Entities;
 using Core.Exceptions;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Interfaces.CustomServices;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,16 +19,27 @@ namespace Core.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public TableService(IUnitOfWork unitOfWork, IMapper mapper)
+        private readonly IFileService _fileService;
+        private readonly IOptions<ImageSettings> _imageSettings;
+        public TableService(IUnitOfWork unitOfWork,
+            IMapper mapper,
+            IFileService fileService,
+            IOptions<ImageSettings> imageSettings)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _fileService = fileService;
+            _imageSettings = imageSettings;
         }
         // METHODS FOR SERVICES
         public async Task Create(TableDTO table)
         {
             if (table == null)
                 throw new HttpException($"Error with create new table! Null!", HttpStatusCode.NotFound);
+
+            string newPath = await _fileService.AddFileAsync(table.Image.OpenReadStream(), 
+                _imageSettings.Value.Path, table.Image.FileName);
+
             await _unitOfWork.TableRepository.Insert(_mapper.Map<Table>(table));
             await _unitOfWork.SaveChangesAsync();
         }

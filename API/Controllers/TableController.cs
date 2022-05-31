@@ -18,11 +18,11 @@ namespace API.Controllers
     {
         private readonly ITableService _tableService;
         private readonly ILogger<TableController> _logger;
-        private readonly IFileStorageService _storageService;
+        private readonly IAzureBlobStorageService _storageService;
         private readonly string containerName = "albums";
 
         public TableController(ITableService tableService,
-            ILogger<TableController> logger, IFileStorageService storageService)
+            ILogger<TableController> logger, IAzureBlobStorageService storageService)
         {
             _tableService = tableService;
             _logger = logger;
@@ -45,21 +45,18 @@ namespace API.Controllers
         }
 
         [HttpPost("Create")]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult> Create([FromForm] TableDTO table)
         {
             if (!ModelState.IsValid) return BadRequest("Model is invalid");
 
-            if (table.Image != null)
-            {
-                string url = await _storageService.UploadFile(containerName, table.Image);
-                await _tableService.Create(table);
-            }
+            string url = await _storageService.UploadFile(containerName, table.Image);
+            await _tableService.Create(table);
 
             _logger.LogInformation("Table was successfully created!");
 
 
-            return Ok(); // also can return all table
+            return Ok(url); // also can return all table
 
         }
 

@@ -1,53 +1,124 @@
 ﻿using Core.Interfaces.CustomServices;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
-using Microsoft.Extensions.Configuration;
 using System.IO;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using Core.Helpers;
+using AutoMapper;
+using Microsoft.AspNetCore.StaticFiles;
+using Core.Exeptions.FileExceptions;
+using Azure.Storage.Blobs.Models;
+using Core.ApiModels;
 
 namespace Core.Services
 {
-    public class AzureStorageService : IFileStorageService
+    public class AzureBlobStorageService : IAzureBlobStorageService
     {
-        private readonly string connectionString;
-        public AzureStorageService(IConfiguration configuration)
+        private readonly IOptions<FileSettings> _fileSettings;
+        private readonly BlobServiceClient _blobServiceClient;
+        private readonly IMapper _mapper;
+
+        public AzureBlobStorageService(IOptions<FileSettings> fileSettings,
+            BlobServiceClient blobServiceClient,
+            IMapper mapper)
         {
-            connectionString = configuration.GetConnectionString("AzureStorageConnectionString");
+            _fileSettings = fileSettings;
+            _blobServiceClient = blobServiceClient;
+            _mapper = mapper;
         }
-        public async Task DeleteFile(string containerName, string fileRoute)
+
+        public async Task<string> AddFileAsync(Stream stream, string folderPath, string fileName)
         {
-            var client = new BlobContainerClient(connectionString, containerName);
+            if (stream == null)
+            {
+                throw new FileIsEmptyException(fileName);
+            }
 
-            if (!await client.ExistsAsync()) return;
+            await CreateDirectoryAsync(folderPath);
 
-            string fileName = Path.GetFileName(fileRoute);
+            string uniqueFileName = CreateName(fileName, folderPath);
 
-            var blob = client.GetBlobClient(fileName);
+            var provider = new FileExtensionContentTypeProvider();
+
+            if (!provider.TryGetContentType(fileName, out string contentType))
+            {
+                throw new CannotGetFileContentTypeException(fileName);
+            }
+
+            var blob = _blobServiceClient.GetBlobContainerClient(folderPath)
+                .GetBlobClient(uniqueFileName);
+
+            BlobHttpHeaders blobHttpHeaders = new BlobHttpHeaders();
+            blobHttpHeaders.ContentType = contentType;
+
+            await blob.UploadAsync(stream, blobHttpHeaders);
+
+            return StorageTypes.AzureBlob.ToString() + ":" + Path.Combine(folderPath, uniqueFileName);
+        }
+
+        public async Task CreateDirectoryAsync(string folderPath)
+        {
+            if (!_blobServiceClient.GetBlobContainerClient(folderPath).Exists())
+            {
+                if (!_fileSettings.Value.AllowCreateFolderPath)
+                {
+                    throw new FileFolderNotExistException(folderPath);
+                }
+                else
+                {
+                    await _blobServiceClient.CreateBlobContainerAsync(folderPath);
+                }
+            }
+        }
+
+        public async Task DeleteFileAsync(string path)
+        {
+            var folderPath = Path.GetDirectoryName(path);
+            var fileName = Path.GetFileName(path);
+
+            var blob = _blobServiceClient.GetBlobContainerClient(folderPath)
+                .GetBlobClient(fileName);
+
             await blob.DeleteIfExistsAsync();
         }
 
-        public async Task<string> EditFile(string containerName, string oldFileRoute, IFormFile newFile)
+        public async Task<DownloadFile> GetFileAsync(string path)
         {
-            await DeleteFile(containerName, oldFileRoute);
-            return await UploadFile(containerName, newFile);
+            var folderPath = Path.GetDirectoryName(path);
+            var fileName = Path.GetFileName(path);
+
+            var blob = _blobServiceClient.GetBlobContainerClient(folderPath)
+                .GetBlobClient(fileName);
+
+            BlobDownloadInfo download = await blob.DownloadAsync();
+
+            var fileToReturn = _mapper.Map<DownloadFile>(download);
+            fileToReturn.Name = fileName;
+
+            return fileToReturn;
         }
 
-        public async Task<string> UploadFile(string containerName, IFormFile file)
+        private string CreateName(string fileName, string folderPath)
         {
-            var client = new BlobContainerClient(connectionString, containerName);
-            await client.CreateIfNotExistsAsync();
-            await client.SetAccessPolicyAsync(Azure.Storage.Blobs.Models.PublicAccessType.Blob);
+            var blob = _blobServiceClient.GetBlobContainerClient(folderPath).GetBlobClient(fileName);
 
-            // custom file name
+            if (blob.Exists())
+            {
+                if (!_fileSettings.Value.AllowChangeName)
+                {
+                    throw new FileNameAlreadyExistException(Path.Combine(folderPath, fileName));
+                }
+                else
+                {
+                    return $"{Path.GetFileNameWithoutExtension(fileName)}_" +
+                        $"{DateTime.Now.ToString("yyyyMMddTHHmmssfff")}" +
+                        $"{Path.GetExtension(fileName)}";
+                }
+            }
 
-            var blob = client.GetBlobClient(file.FileName);
-            await blob.UploadAsync(file.OpenReadStream());
-
-            return blob.Uri.ToString();
+            return fileName;
         }
     }
+
 }

@@ -23,7 +23,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
-        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public async Task<ActionResult<IEnumerable<AuthorDTO>>> Get()
         {
             return Ok(await _authorService.Get());

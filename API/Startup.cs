@@ -43,6 +43,12 @@ namespace API
 
             services.AddAutoMapper();
 
+            services.AddFileService(Configuration);
+
+            services.ConfigureFileSettings(Configuration);
+
+            services.ConfigureImageSettings(Configuration);
+
             services.AddResponseCaching();
 
             services.AddJwtAuthentication(Configuration);
