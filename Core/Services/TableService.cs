@@ -40,7 +40,9 @@ namespace Core.Services
             string newPath = await _fileService.AddFileAsync(table.Image.OpenReadStream(), 
                 _imageSettings.Value.Path, table.Image.FileName);
 
-            await _unitOfWork.TableRepository.Insert(_mapper.Map<Table>(table));
+            var newTable = _mapper.Map<Table>(table);
+            newTable.Image = newPath;
+            await _unitOfWork.TableRepository.Insert(newTable);
             await _unitOfWork.SaveChangesAsync();
         }
         public async Task Delete(int id)

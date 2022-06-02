@@ -1,5 +1,5 @@
 ﻿using Core.Resources;
-using Provis.Core.Resources;
+using Core.Resources;
 using System;
 using System.Runtime.Serialization;
 
