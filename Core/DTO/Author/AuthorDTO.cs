@@ -18,7 +18,7 @@ namespace Core.DTO
         public string Location { get; set; }
         public double Rating { get; set; }
         public string Avatar { get; set; }
-        public IEnumerable<Table> Tables { get; set; }
+        public IEnumerable<Entities.Table> Tables { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }
 }

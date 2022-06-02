@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace API.Controllers
 {
@@ -20,19 +21,21 @@ namespace API.Controllers
     {
         private readonly ITableService _tableService;
         private readonly ILogger<TableController> _logger;
+        private readonly IMapper _mapper;
 
         public TableController(ITableService tableService,
-            ILogger<TableController> logger)
+            ILogger<TableController> logger, IMapper mapper)
         {
             _tableService = tableService;
             _logger = logger;
+            _mapper = mapper;
         }
         [HttpGet]
         [ResponseCache(Duration = 30)]
 
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
-            string userId = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+            //string userId = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
 
             //_logger.LogInformation();
             return Ok(await _tableService.Get());
