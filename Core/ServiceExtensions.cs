@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Azure.Storage.Blobs;
 using Core.DTO;
+using Core.DTO.Table;
 using Core.Entities;
 using Core.Helpers;
 using Core.Interfaces.CustomServices;
@@ -47,10 +48,15 @@ namespace Infrastructure
             var configures = new MapperConfiguration(mc =>
             {
                 mc.CreateMap<Author, AuthorDTO>().ReverseMap();
-                mc.CreateMap<Table, TableDTO>()
+                mc.CreateMap<Table, TableDTO>().ReverseMap();
+                mc.CreateMap <Table, TableResponseDTO>()
+                    .ForMember(dest => dest.Image,
+                        opt => 
+                            opt.MapFrom(src => 
+                                Constants.BlobPath + Constants.BlobPathImages + src.Image.Substring(17)));
                     //.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src =>  src.Image))
-                    .ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => Constants.BlobPath + Constants.BlobPathImages + src.Image.Substring(17)))
-                    .ForMember(dest2 => dest2.Image, opt => opt.Ignore());
+                    //.ForMember(dest => dest.ImageUrl, opt => opt.MapFrom(src => Constants.BlobPath + Constants.BlobPathImages + src.Image.Substring(17)))
+                    //.ForMember(dest2 => dest2.Image, opt => opt.Ignore());
                     ; //.ReverseMap();
                // mc.CreateMap<TableDTO, Table>()
                  //   .ForMember(dest => dest., opt => opt.MapFrom(src => src.Image)); //.ReverseMap();

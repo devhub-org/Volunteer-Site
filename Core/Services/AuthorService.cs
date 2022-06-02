@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Core.DTO.Table;
 using Microsoft.AspNetCore.Identity;
 
 namespace Core.Services
@@ -71,10 +72,10 @@ namespace Core.Services
             return _mapper.Map<AuthorDTO>(await author);
         }
 
-        public async Task<IEnumerable<TableDTO>> GetAuthorTables(string id)
+        public async Task<IEnumerable<TableResponseDTO>> GetAuthorTables(string id)
         {
             if (id == null) throw new HttpException($"Invalid id {id}!", HttpStatusCode.BadGateway);
-            var tables = _mapper.Map<IEnumerable<TableDTO>>(await _unitOfWork.TableRepository.Get(e => e.AuthorId == id));
+            var tables = _mapper.Map<IEnumerable<TableResponseDTO>>(await _unitOfWork.TableRepository.Get(e => e.AuthorId == id));
             return tables;
         }
     }

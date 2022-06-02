@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Core.DTO.Table;
 
 namespace Core.Services
 {
@@ -60,16 +61,16 @@ namespace Core.Services
             _unitOfWork.TableRepository.Update(_mapper.Map<Table>(table));
             await _unitOfWork.SaveChangesAsync();
         }
-        public async Task<IEnumerable<TableDTO>> Get()
+        public async Task<IEnumerable<TableResponseDTO>> Get()
         {
-            return _mapper.Map<IEnumerable<TableDTO>>(await _unitOfWork.TableRepository.Get());
+            return _mapper.Map<IEnumerable<TableResponseDTO>>(await _unitOfWork.TableRepository.Get());
         }
-        public async Task<TableDTO> GetTableById(int id)
+        public async Task<TableResponseDTO> GetTableById(int id)
         {
             if (id < 0) throw new HttpException($"Invalid id!", HttpStatusCode.BadGateway);
             var table = _unitOfWork.TableRepository.GetById(id);
             if (table == null) throw new HttpException($"Table Not Found! Null!", HttpStatusCode.NotFound);
-            return _mapper.Map<TableDTO>(await table);
+            return _mapper.Map<TableResponseDTO>(await table);
         }
     }
 }

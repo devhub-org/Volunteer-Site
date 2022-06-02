@@ -12,6 +12,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
+using Core.DTO.Table;
 
 namespace API.Controllers
 {
@@ -42,7 +43,7 @@ namespace API.Controllers
         }
         [HttpGet("{id:int}")]
         //[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<TableDTO>> Get(int id)
+        public async Task<ActionResult<TableResponseDTO>> Get(int id)
         {
             var track = await _tableService.GetTableById(id);
             _logger.LogInformation($"Got a table with id {id}");
