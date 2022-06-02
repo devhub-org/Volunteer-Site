@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers
@@ -30,6 +32,9 @@ namespace API.Controllers
 
         public async Task<ActionResult<IEnumerable<TableDTO>>> Get()
         {
+            string userId = HttpContext.User.Claims.First(i => i.Type == ClaimTypes.NameIdentifier).Value;
+
+            //_logger.LogInformation();
             return Ok(await _tableService.Get());
         }
         [HttpGet("{id:int}")]

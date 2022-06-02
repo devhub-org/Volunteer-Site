@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Core.Services
 {
@@ -17,10 +18,12 @@ namespace Core.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public AuthorService(IUnitOfWork unitOfWork,IMapper mapper)
+        private readonly UserManager<Author> _userManager;
+        public AuthorService(IUnitOfWork unitOfWork,IMapper mapper, UserManager<Author> userManager)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
         // METHODS FOR SERVICES
         public async Task Create(AuthorDTO author)
@@ -38,6 +41,13 @@ namespace Core.Services
             if (author != null)
                 await _unitOfWork.AuthorRepository.Delete(author);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<string> GetAuthorRoleAsync(Author author)
+        {
+            var userRoles = await _userManager.GetRolesAsync(author);
+            if (userRoles == null || userRoles.Count == 0) throw new HttpException("User haven`t roles", HttpStatusCode.BadRequest);
+            return userRoles.First();
         }
 
         public async Task Edit(AuthorDTO author)

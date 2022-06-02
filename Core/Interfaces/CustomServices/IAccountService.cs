@@ -11,7 +11,8 @@ namespace Core.Interfaces.CustomServices
     {
         Task RegisterAsync(RegisterUserDTO data);
         Task<AuthorizationDTO> LoginAsync(string email, string password);
-        Task<AuthorizationDTO> RefreshTokenAsync(AuthorizationDTO userTokensDTO);
+        Task<AuthorizationDTO> CreateRefreshTokenAsync(string userId);
+        Task<AuthorizationDTO> RefreshTokenAsync(AuthorizationDTO authorizationDTO);
         Task LogoutAsync(AuthorizationDTO userTokensDTO);
         Task SentResetPasswordTokenAsync(string userEmail);
         //Task ResetPasswordAsync(AuthorChangePasswordDTO userChangePasswordDTO);

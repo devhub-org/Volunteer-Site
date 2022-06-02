@@ -18,5 +18,6 @@ namespace Infrastructure.Data
         }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Table> Tables { get; set; }
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }
