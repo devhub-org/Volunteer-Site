@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Core.Entities
 {
@@ -18,6 +19,7 @@ namespace Core.Entities
         [MaxLength(500_000, ErrorMessage = "You can't ask more than 500,000 people!")]
         public double Price { get; set; }
         [Required]
+        [DefaultValue(true)]
         public bool IsActive { get; set; } = true;
     }
 }
