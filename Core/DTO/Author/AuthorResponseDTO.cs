@@ -1,15 +1,10 @@
-﻿using Core.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Core.Entities;
 
-namespace Core.DTO
+namespace Core.DTO.Author
 {
-    public class AuthorDTO
+    public class AuthorResponseDTO
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -17,7 +12,7 @@ namespace Core.DTO
         public string Email { get; set; }
         public string Location { get; set; }
         public double Rating { get; set; }
-        public IFormFile Avatar { get; set; }
+        public string Avatar { get; set; }
         public IEnumerable<Entities.Table> Tables { get; set; }
         public DateTime CreatedDate { get; set; } = DateTime.Now;
     }

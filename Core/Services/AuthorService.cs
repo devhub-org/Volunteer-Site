@@ -4,14 +4,15 @@ using Core.Entities;
 using Core.Exceptions;
 using Core.Interfaces;
 using Core.Interfaces.CustomServices;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Core.DTO.Table;
 using Microsoft.AspNetCore.Identity;
+using Core.Helpers;
+using Microsoft.Extensions.Options;
+using Core.DTO.Author;
 
 namespace Core.Services
 {
@@ -20,18 +21,29 @@ namespace Core.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly UserManager<Author> _userManager;
-        public AuthorService(IUnitOfWork unitOfWork,IMapper mapper, UserManager<Author> userManager)
+        private readonly IFileService _fileService;
+        private readonly IOptions<ImageSettings> _imageSettings;
+        public AuthorService(IUnitOfWork unitOfWork, IMapper mapper, UserManager<Author> userManager, IFileService fileService,
+            IOptions<ImageSettings> imageSettings)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _userManager = userManager;
+            _fileService = fileService;
+            _imageSettings = imageSettings;
         }
         // METHODS FOR SERVICES
         public async Task Create(AuthorDTO author)
         {
             if (author == null)
                 throw new HttpException($"Error with create new author!", HttpStatusCode.NotFound);
-            await _unitOfWork.AuthorRepository.Insert(_mapper.Map<Author>(author));
+
+            string newPath = await _fileService.AddFileAsync(author.Avatar.OpenReadStream(),
+                _imageSettings.Value.Path, author.Avatar.FileName);
+
+            var newAuthor = _mapper.Map<Author>(author);
+            newAuthor.Avatar = newPath;
+            await _unitOfWork.AuthorRepository.Insert(newAuthor);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -59,17 +71,17 @@ namespace Core.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<AuthorDTO>> Get()
+        public async Task<IEnumerable<AuthorResponseDTO>> Get()
         {
-            return _mapper.Map<IEnumerable<AuthorDTO>>(await _unitOfWork.AuthorRepository.Get());
+            return _mapper.Map<IEnumerable<AuthorResponseDTO>>(await _unitOfWork.AuthorRepository.Get());
         }
 
-        public async Task<AuthorDTO> GetAuthorById(string id)
+        public async Task<AuthorResponseDTO> GetAuthorById(string id)
         {
             if (id == null) throw new HttpException($"Invalid id!", HttpStatusCode.BadGateway);
             var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author == null) throw new HttpException($"Author Not Found!", HttpStatusCode.NotFound);
-            return _mapper.Map<AuthorDTO>(await author);
+            return _mapper.Map<AuthorResponseDTO>(await author);
         }
 
         public async Task<IEnumerable<TableResponseDTO>> GetAuthorTables(string id)

@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using Core.DTO.Table;
 using Core.Entities;
+using Core.DTO.Author;
 
 namespace Core.Interfaces.CustomServices
 {
     public interface IAuthorService
     {
-        Task<IEnumerable<AuthorDTO>> Get();
-        Task<AuthorDTO> GetAuthorById(string id);
+        Task<IEnumerable<AuthorResponseDTO>> Get();
+        Task<AuthorResponseDTO> GetAuthorById(string id);
         Task<IEnumerable<TableResponseDTO>> GetAuthorTables(string id);
         Task Create(AuthorDTO author);
         Task Edit(AuthorDTO author);

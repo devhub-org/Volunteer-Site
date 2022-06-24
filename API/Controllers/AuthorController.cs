@@ -1,4 +1,5 @@
 ﻿using Core.DTO;
+using Core.DTO.Author;
 using Core.Interfaces.CustomServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -30,7 +31,7 @@ namespace API.Controllers
         }
         [HttpGet("{id:int}")]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult<AuthorDTO>> Get(string id)
+        public async Task<ActionResult<AuthorResponseDTO>> Get(string id)
         {
             var author = await _authorService.GetAuthorById(id);
             _logger.LogInformation($"Got a author with id { id}");
@@ -48,11 +49,12 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-        public async Task<ActionResult> Post([FromBody] AuthorDTO author)
+        public async Task<ActionResult> Post([FromForm] AuthorDTO author)
         {
+            if (!ModelState.IsValid) return BadRequest("Model is invalid");
             await _authorService.Create(author);
             _logger.LogInformation("Author was successfully created!");
-            return Ok();
+            return Ok(); // also can return all table
         }
 
         [HttpPut]

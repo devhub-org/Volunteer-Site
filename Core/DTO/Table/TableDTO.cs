@@ -1,8 +1,5 @@
-﻿using Core.Entities;
-using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Http;
+
 namespace Core.DTO
 {
     public class TableDTO

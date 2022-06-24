@@ -6,11 +6,8 @@ using Core.Helpers;
 using Core.Interfaces;
 using Core.Interfaces.CustomServices;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Core.DTO.Table;
 
