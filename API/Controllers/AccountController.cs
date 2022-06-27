@@ -22,7 +22,7 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterUserDTO data)
+        public async Task<ActionResult> Register([FromForm] RegisterUserDTO data)
         {
             await _accountService.RegisterAsync(data);
             return Ok("Successfully created new user!");

@@ -49,6 +49,11 @@ namespace Infrastructure
             var configures = new MapperConfiguration(mc =>
             {
                 mc.CreateMap<Author, AuthorDTO>().ReverseMap();
+                mc.CreateMap<RegisterUserDTO, Author>().ReverseMap()
+                .ForMember(dest => dest.Avatar,
+                                       opt =>
+                                           opt.MapFrom(src =>
+                                               Constants.BlobPath + Constants.BlobPathImages + src.Avatar.Substring(17)));
                 mc.CreateMap<Author, AuthorResponseDTO>()
                                    .ForMember(dest => dest.Avatar,
                                        opt =>

@@ -15,6 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Core.Interfaces;
+using System.Net;
 
 namespace Core.Services
 {
@@ -27,10 +28,13 @@ namespace Core.Services
         private RoleManager<IdentityRole> _roleManager;
         private IRepository<RefreshToken> _refreshTokenRepository;
         private IOptions<RolesOptions> _rolesOptions;
+        private readonly IFileService _fileService;
+        private readonly IOptions<ImageSettings> _imageSettings;
 
         public AccountService(UserManager<Author> userManager, 
             IOptions<JwtOptions> jwtOptions,
-            IJwtService jwtService, IRepository<RefreshToken> refreshTokenRepository, IOptions<RolesOptions> rolesOptions, RoleManager<IdentityRole> roleManager, IAuthorService authorService)
+            IJwtService jwtService, IRepository<RefreshToken> refreshTokenRepository, IOptions<RolesOptions> rolesOptions, RoleManager<IdentityRole> roleManager, IAuthorService authorService, IFileService fileService,
+            IOptions<ImageSettings> imageSettings)
         {
             _userManager = userManager;
             _jwtOptions = jwtOptions;
@@ -39,6 +43,8 @@ namespace Core.Services
             _rolesOptions = rolesOptions;
             _roleManager = roleManager;
             _authorService = authorService;
+            _fileService = fileService;
+            _imageSettings = imageSettings;
         }
 
         public async Task<AuthorizationDTO> LoginAsync(string email, string password)
@@ -87,8 +93,15 @@ namespace Core.Services
 
         public async Task RegisterAsync(RegisterUserDTO data)
         {
+            if (data == null)
+                throw new HttpException($"Error with create new account!", HttpStatusCode.NotFound);
+
+            string newPath = await _fileService.AddFileAsync(data.Avatar.OpenReadStream(),
+                _imageSettings.Value.Path, data.Avatar.FileName);
+
             var user = new Author()
             {
+                Avatar = newPath,
                 UserName = data.Email,
                 Email = data.Email,
                 Name = data.Name,
